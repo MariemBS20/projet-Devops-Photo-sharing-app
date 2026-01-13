@@ -1,0 +1,93 @@
+name: photoapp
+
+services:
+  # Production/Development API service
+
+  photographer-dev:
+      build:
+        context: ./photographer-service
+        target: photographer-dev
+      volumes:
+        - ./photographer-service:/app
+        - /var/run/docker.sock:/var/run/docker.sock
+      environment:
+        - MONGO_HOST=mongo
+        - MONGO_PORT=27017
+        - MONGO_USER=${MONGO_USER:-}
+        - MONGO_PASSWORD=${MONGO_PASSWORD:-}
+        - DATABASE_NAME=photographers
+        - AUTH_DATABASE_NAME=photographers
+      ports:
+        - "8001:8000"
+      depends_on:
+        mongo:
+          condition: service_healthy
+      command: /app/start-uvicorn.sh 
+      networks:
+        - app-network
+      # profiles:
+      #   - dev  # Only starts with docker compose --profile dev
+
+  photo-dev:
+      build:
+        context: ./photo-service
+        target: photo-dev
+      volumes:
+        - ./photo-service:/app
+        - /var/run/docker.sock:/var/run/docker.sock
+      environment:
+        - MONGO_HOST=mongo
+        - MONGO_PORT=27017
+        - MONGO_USER=${MONGO_USER:-}
+        - MONGO_PASSWORD=${MONGO_PASSWORD:-}
+        - DATABASE_NAME=photos
+        - AUTH_DATABASE_NAME=photos
+        - PHOTOGRAPHER_HOST=photographer-dev
+        - PHOTOGRAPHER_PORT=8000
+        - TAGS_HOST=tags
+      ports:
+        - "8002:8000"
+      depends_on:
+        mongo:
+          condition: service_healthy
+        photographer-dev:
+          condition: service_started
+      command: /app/start-uvicorn.sh 
+      networks:
+        - app-network
+
+  tags:
+    image: "gitlab-registry.imt-atlantique.fr/devops-lab/shared/tags:1.0"
+    ports:
+      - "50051:50051"
+    networks:
+      - app-network
+      
+  mongo:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=photographers
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/photographers --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
+
+
+
+

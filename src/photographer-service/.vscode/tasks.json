@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+     "label": "Restart Photographer API",
+      "type": "shell",
+      "command": "bash -c 'if [ -f /tmp/uvicorn.pid ]; then kill $(cat /tmp/uvicorn.pid) 2>/dev/null; fi; sleep 1; setsid uvicorn main:app --reload --host 0.0.0.0 --port 8000 > /tmp/uvicorn.log 2>&1 & echo $! > /tmp/uvicorn.pid && echo \"✅ API restarted (PID: $(cat /tmp/uvicorn.pid))\"'",
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Photographer API",
+      "type": "shell",
+      "command": "bash -c 'setsid uvicorn main:app --reload --host 0.0.0.0 --port 8000 > /tmp/uvicorn.log 2>&1 & echo $! > /tmp/uvicorn.pid && sleep 2 && if kill -0 $(cat /tmp/uvicorn.pid) 2>/dev/null; then echo \"✅ API started (PID: $(cat /tmp/uvicorn.pid))\"; else echo \"❌ Failed\"; cat /tmp/uvicorn.log; fi'",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Stop Photographer API",
+      "type": "shell",
+      "command": "if [ -f /tmp/uvicorn.pid ]; then kill $(cat /tmp/uvicorn.pid) 2>/dev/null && echo '🛑 API stopped' || echo '⚠️  No running API found'; rm -f /tmp/uvicorn.pid; else echo '⚠️  No PID file found'; fi",
+      "problemMatcher": []
+    },
+    {
+      "label": "View Photographer API Logs",
+      "type": "shell",
+      "command": "tail -f /tmp/uvicorn.log",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+       {
+      "label": "Check Photographer API Status",
+      "type": "shell",
+      "command": "bash -c 'if [ -f /tmp/uvicorn.pid ] && kill -0 $(cat /tmp/uvicorn.pid) 2>/dev/null; then echo \"✅ API running (PID: $(cat /tmp/uvicorn.pid))\"; curl -s http://localhost:8000/health | python -m json.tool 2>/dev/null || echo \"⚠️  API process exists but not responding\"; else echo \"❌ API not running\"; fi'",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Photographer Tests",
+      "type": "shell",
+      "command": "pytest -v",
+      "problemMatcher": [],
+       "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    }
+  ]
+}

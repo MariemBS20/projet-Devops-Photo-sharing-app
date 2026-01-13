@@ -1,0 +1,42 @@
+{
+	"name": "Photo Service Development",
+
+	"dockerComposeFile": "../../src/docker-compose.yml",
+	"service": "photo-dev",
+	"runServices": ["photo-dev", "mongo", "tags", "photographer-dev"],
+	"shutdownAction": "none",
+	"workspaceFolder": "/app",
+	"overrideCommand": true,
+	// "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,consistency=cached",
+
+	// VSCode settings for this container
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.black-formatter"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"terminal.integrated.scrollback": 10000
+			}
+		}
+	},
+
+	// Post-create command (runs after container is created)
+	"postCreateCommand": "echo 'Use Run Task to start the photo API'",
+
+	// Mount docker socket for docker-in-docker (optional)
+	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	],
+
+	// Environment variables
+	"remoteEnv": {
+		"MONGO_HOST": "mongo",
+		"MONGO_PORT": "27017",
+		"DATABASE_NAME": "photos",
+		"PYTHONPATH": "/app"
+	}
+}

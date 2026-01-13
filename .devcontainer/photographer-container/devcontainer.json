@@ -1,0 +1,52 @@
+{
+	"name": "Photographer Service Development",
+
+	"dockerComposeFile": "../../src/docker-compose.yml",
+	"service": "photographer-dev",
+	"runServices": ["photographer-dev","mongo"],
+	"shutdownAction": "none",
+	"workspaceFolder": "/app",
+	"overrideCommand": true,
+	// "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,consistency=cached",
+
+	// VSCode settings for this container
+	"customizations": {
+		"vscode": {
+			// Extensions to install in the container
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.black-formatter",
+				"jeff-hykin.better-dockerfile-syntax"
+			],
+
+			// VSCode settings
+			"settings": {
+				// Terminal
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"terminal.integrated.scrollback": 10000,
+				"task.autoDetect": "on"
+			}
+		}
+	},
+
+	// Post-create command (runs after container is created)
+	"postCreateCommand": "echo 'Use Run Task to start the photographer API'",
+	
+	// Commands to run when the container starts
+	// "postStartCommand": "/app/start-dev.sh",
+	//"postStartCommand": "nohup uvicorn main:app --reload --host 0.0.0.0 --port 8000 > /tmp/uvicorn.log 2>&1 & echo '✅ API started in background. Use tasks to stop/view logs.'",
+
+	// Mount docker socket for docker-in-docker (optional)
+	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	],
+
+	// Environment variables
+	"remoteEnv": {
+		"MONGO_HOST": "mongo",
+		"MONGO_PORT": "27017",
+		"DATABASE_NAME": "photographers",
+		"PYTHONPATH": "/app"
+	}
+}

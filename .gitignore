@@ -1,0 +1,75 @@
+# ----------------------------
+# Python
+# ----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.pytest_cache/
+*.mypy_cache/
+*.coverage
+.coverage.*
+.cache/
+.pytest_cache/
+.venv/
+env/
+venv/
+ENV/
+
+# ----------------------------
+# Pydantic / FastAPI / config
+# ----------------------------
+# Ignore tous les fichiers .env
+.env
+.env.*
+
+# Exceptions : garder les fichiers de modèle pour documentation/versionnement
+!*.env.example
+!*.env.template
+
+# ----------------------------
+# Docker
+# ----------------------------
+# Images et volumes locaux
+docker-compose.override.yml
+docker-compose.override.yaml
+*.log
+
+# Ignore les volumes et tmp
+tmp/
+logs/
+*.pid
+
+#
+# ----------------------------
+# MacOS
+# ----------------------------
+.DS_Store
+
+# ----------------------------
+# JetBrains / PyCharm
+# ----------------------------
+.idea/
+
+# ----------------------------
+# Git
+# ----------------------------
+# Ignore les fichiers spécifiques à l’OS ou aux IDE
+*.swp
+*.swo
+*~
+
+# ----------------------------
+# Jupyter
+# ----------------------------
+.ipynb_checkpoints/
+
+# ----------------------------
+# Tests / coverage
+# ----------------------------
+htmlcov/
+.coverage

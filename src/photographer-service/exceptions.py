@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 import pymongo
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(_name_)
 
 
 class PhotographerNotFoundError(HTTPException):

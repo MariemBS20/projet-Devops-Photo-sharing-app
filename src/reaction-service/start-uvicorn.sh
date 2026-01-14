@@ -11,9 +11,9 @@ echo "🚀 Starting $SERVICE_NAME API..."
 if [ -f "$PID_FILE" ]; then
     OLD_PID=$(cat "$PID_FILE")
     if ! kill -0 "$OLD_PID" 2>/dev/null; then
-        echo "Cleaning stale PID file"
+        echo "🧹 Cleaning stale PID file"
         rm -f "$PID_FILE"
-    fi
+    fi       
 fi
 
 # Démarrer uvicorn en background

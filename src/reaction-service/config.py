@@ -15,13 +15,13 @@ class Settings(BaseSettings):
     auth_database_name: str = "reactions"
 
     # Photographer Service Configuration
-    photographer_host: str = "photographer-api"
-    photographer_port: int = 80
+    photographer_host: str = "photographer-dev"
+    photographer_port: int = 8000
     photographer_timeout: int = 5
 
     # Photo Service Configuration
-    photo_host: str = "photo-service"
-    photo_port: int = 80
+    photo_host: str = "photo-dev"
+    photo_port: int = 8000
     photo_timeout: int = 5
 
     # API Configuration

@@ -67,7 +67,7 @@ async def add_reaction(
     await PhotoClient.check_photo_exists(display_name, photo_id)
 
     # Step 3: Verify reactor exists
-    await PhotographerClient.check_photographer_exists(reaction_data.reactor_name)
+    #await PhotographerClient.check_photographer_exists(reaction_data.reactor_name)
 
     # Step 4: Check if reaction already exists
     existing_reaction = await Reaction.find_one(

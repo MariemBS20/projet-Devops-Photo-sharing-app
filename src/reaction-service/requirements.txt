@@ -1,0 +1,15 @@
+# FastAPI and server
+fastapi==0.115.10
+uvicorn[standard]==0.34.0
+
+# Data validation and settings
+pydantic==2.10.5
+pydantic-settings==2.7.0
+
+# MongoDB and ODM
+motor==3.6.0
+beanie==1.27.0
+
+# Optional but recommended
+python-multipart==0.0.19  # For form data
+email-validator==2.2.0    # For email validation if needed

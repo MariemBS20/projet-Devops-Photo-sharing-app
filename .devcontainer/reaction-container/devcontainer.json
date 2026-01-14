@@ -1,0 +1,41 @@
+{
+	"name": "Reaction Service Development",
+
+	"dockerComposeFile": "../../src/docker-compose.yml",
+	"service": "reaction-dev",
+	"runServices": ["reaction-dev", "mongo", "photo-dev"],
+	"shutdownAction": "none",
+	"workspaceFolder": "/app",
+	"overrideCommand": true,
+
+	// VSCode settings for this container
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.black-formatter"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"terminal.integrated.scrollback": 10000
+			}
+		}
+	},
+
+	// Post-create command (runs after container is created)
+	"postCreateCommand": "echo 'Use Run Task to start the reaction API'",
+
+	// Mount docker socket for docker-in-docker (optional)
+	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	],
+
+	// Environment variables
+	"remoteEnv": {
+		"MONGO_HOST": "mongo",
+		"MONGO_PORT": "27017",
+		"DATABASE_NAME": "reactions",
+		"PYTHONPATH": "/app"
+	}
+}

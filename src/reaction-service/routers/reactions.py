@@ -2,6 +2,8 @@
 """Reaction route handlers."""
 import logging
 from typing import Annotated
+import asyncio
+
 from datetime import datetime
 from fastapi import APIRouter, Path, Body, status, Response
 from models import (
@@ -15,7 +17,7 @@ from models import (
 
 
 from config import settings
-from clients import PhotographerClient, PhotoClient
+from clients import PhotographerClient, PhotoClient,photo_of_day_client
 from exceptions import (
     ReactionNotFoundError,
     ReactionAlreadyExistsError,
@@ -89,7 +91,13 @@ async def add_reaction(
         updated_at=datetime.utcnow()
     )
     await reaction.save()
-
+    
+  
+        
+    await photo_of_day_client.increment_reaction(
+        display_name=display_name,
+        photo_id=photo_id,
+        reaction_type=reaction_data.reaction)
     # Step 6: Set Location header
     response.headers["Location"] = f"/reactions/{display_name}/{photo_id}/{reaction_data.reactor_name}"
 

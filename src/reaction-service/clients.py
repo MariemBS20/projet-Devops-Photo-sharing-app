@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """External service clients."""
-
+import grpc
+from grpc import aio
 import logging
 import httpx
 from config import settings
@@ -10,6 +11,10 @@ from exceptions import (
     PhotoNotFoundError,
     # PhotoServiceUnavailableError n'était pas défini dans tes exceptions, on peut le créer ici si besoin
 )
+from grpc.aio import insecure_channel
+import photo_of_day_pb2
+import photo_of_day_pb2_grpc
+
 
 logger = logging.getLogger(__name__)
 
@@ -74,32 +79,8 @@ class PhotoClient:
             logger.error(f"Error calling photo service: {e}")
             raise PhotoServiceUnavailableError()
 
-class PhotoOfDayClient:
-    """gRPC client for Photo of Day service."""
 
-    def __init__(self):
-        self.channel: aio.Channel | None = None
-        self.stub: photo_of_day_pb2_grpc.PhotoOfDayServiceStub | None = None
-
-    async def connect(self):
-        """Establish gRPC connection."""
-        logger.info(f"Connecting to Photo of Day service at {settings.photo_of_day_address}")
-        self.channel = aio.insecure_channel(settings.photo_of_day_address)
-        self.stub = photo_of_day_pb2_grpc.PhotoOfDayServiceStub(self.channel)
-        logger.info("✅ Connected to Photo of Day service")
-
-    async def disconnect(self):
-        """Close gRPC connection."""
-        if self.channel:
-            await self.channel.close()
-            logger.info("Disconnected from Photo of Day service")
-
-    async def increment_reaction(
-        self,
-        display_name: str,
-        photo_id: int,
-        reaction_type: str
-    ) -> bool:
+ 
         """
         Notify Photo of Day service that a reaction was added.
         
@@ -134,4 +115,31 @@ class PhotoOfDayClient:
 
 
 # Create singleton instance
+class PhotoOfDayClient:
+    def __init__(self):
+        self.channel = None
+        self.stub = None
+
+    async def connect(self):
+        address = f"{settings.PHOTO_OF_DAY_HOST}:{settings.PHOTO_OF_DAY_PORT}"
+        logger.info(f"Connecting to Photo of Day service at {address}")
+        self.channel = insecure_channel(address)
+        self.stub = photo_of_day_pb2_grpc.PhotoOfDayServiceStub(self.channel)
+        logger.info("✅ Connected to Photo of Day service")
+
+    async def increment_reaction(self, display_name: str, photo_id: int, reaction_type: str):
+        if self.stub is None:
+            await self.connect()
+        request = photo_of_day_pb2.IncrementReactionRequest(
+            display_name=display_name,
+            photo_id=photo_id,
+            reaction_type=reaction_type
+        )
+        try:
+            logger.info(f"📤 Sending IncrementReaction request for {display_name}/{photo_id} -> {reaction_type}")
+            response = await self.stub.IncrementReaction(request, timeout=5.0)
+            logger.info(f"✅ Reaction incremented: {response.success}")
+        except grpc.RpcError as e:
+            logger.error(f"❌ gRPC error: {e.code()} - {e.details()}")
+
 photo_of_day_client = PhotoOfDayClient()

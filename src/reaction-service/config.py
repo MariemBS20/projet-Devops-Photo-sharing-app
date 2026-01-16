@@ -25,10 +25,10 @@ class Settings(BaseSettings):
     photo_timeout: int = 5
 
     # Photo of Day gRPC Service Configuration
-    photo_of_day_host: str = "photo-of-day-dev"
-    photo_of_day_port: int = 50052
+    PHOTO_OF_DAY_HOST: str = "photo-of-day-dev"
+    PHOTO_OF_DAY_PORT: int = 50052
     photo_of_day_timeout: int = 5
-
+    photo_of_day_address: str = "photo-of-day-dev:50052"
     # API Configuration
     api_title: str = "Reaction Service"
     api_version: str = "1.0.0"
@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     @property
     def photo_of_day_grpc_address(self) -> str:
         """Construct Photo of Day gRPC address."""
-        return f"{self.photo_of_day_host}:{self.photo_of_day_port}"
+        return f"{self.PHOTO_OF_DAY_HOST}:{self.PHOTO_OF_DAY_PORT}"
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
 

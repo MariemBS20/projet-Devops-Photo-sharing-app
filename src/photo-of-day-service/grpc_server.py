@@ -31,55 +31,50 @@ class PhotoOfDayServicer(photo_of_day_pb2_grpc.PhotoOfDayServiceServicer):
         self.photo_client = PhotoClient()
         logger.info("PhotoOfDayServicer initialized")
 
-    async def IncrementReaction(
-        self, 
-        request: photo_of_day_pb2.IncrementReactionRequest, 
-        context: grpc.aio.ServicerContext
-    ) -> photo_of_day_pb2.IncrementReactionResponse:
-        """Increment reactions for a photo."""
-        try:
-            logger.info(
-                f"Increment reaction: {request.display_name}/"
-                f"{request.photo_id} - {request.reaction_type}"
-            )
+   
+    async def IncrementReaction(self, request, context):
+        display_name = request.display_name
+        photo_id = request.photo_id
+        reaction_type = request.reaction_type
 
-            today = datetime.utcnow().isoformat()
+        logger.info(f"Increment reaction: {display_name}/{photo_id} - {reaction_type}")
 
-            # Update or insert reaction stats
-            result = await self.collection.update_one(
-                {
-                    "display_name": request.display_name,
-                    "photo_id": request.photo_id
-                },
-                {
-                    "$inc": {"total_reactions": 1},
-                    "$setOnInsert": {"first_reaction_date": today},
-                    "$set": {"last_reaction_date": today},
-                    "$inc": {f"reaction_breakdown.{request.reaction_type}": 1}
-                },
-                upsert=True
-            )
-
-            doc = await self.collection.find_one({
-                "display_name": request.display_name,
-                "photo_id": request.photo_id
-            })
-
-            total_reactions = doc["total_reactions"] if doc else 1
-
-            return photo_of_day_pb2.IncrementReactionResponse(
-                success=True,
-                message="Reaction recorded",
-                total_reactions=total_reactions
-            )
-
-        except Exception as e:
-            logger.error(f"Error in IncrementReaction: {e}")
+        # Récupérer la photo depuis la DB
+        photo = await self.collection.find_one({"display_name": display_name, "photo_id": photo_id})
+        if not photo:
             return photo_of_day_pb2.IncrementReactionResponse(
                 success=False,
-                message=str(e),
+                message="Photo not found",
                 total_reactions=0
             )
+
+        # Incrémenter le compteur pour la réaction
+        reactions = photo.get("reaction_breakdown", {})  # {"coeur": 3, "fire": 1, ...}
+        reactions[reaction_type] = reactions.get(reaction_type, 0) + 1
+
+        # Mettre à jour la DB
+        await self.collection.update_one(
+            {"display_name": display_name, "photo_id": photo_id},
+            {
+                "$set": {"reaction_breakdown": reactions},
+                "$setOnInsert": {"first_reaction_date": datetime.utcnow().isoformat()},
+                "$currentDate": {"last_reaction_date": True}  # met la date actuelle
+            },
+            upsert=True
+        )
+
+        # Calculer le total des réactions
+        total_reactions = sum(reactions.values())
+        
+
+        logger.info(f"Reaction incremented successfully: total_reactions={total_reactions}")
+
+        # Retourner la réponse gRPC
+        return photo_of_day_pb2.IncrementReactionResponse(
+            success=True,
+            message="Reaction incremented",
+            total_reactions=total_reactions
+        )
 
     async def GetPhotoOfDay(
         self, 
@@ -155,7 +150,7 @@ async def serve():
         PhotoOfDayServicer(), server
     )
     
-    listen_addr = f"127.0.0.1:{settings.grpc_port}"
+    listen_addr = f"{settings.grpc_host}:{settings.grpc_port}"
     server.add_insecure_port(listen_addr)
     
     logger.info(f"🚀 Starting gRPC server on {listen_addr}")

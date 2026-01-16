@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package photoofday;
+
+// Service pour gérer les statistiques des photos
+service PhotoOfDayService {
+    // Incrémente le compteur de réactions pour une photo
+    rpc IncrementReaction (IncrementReactionRequest) returns (IncrementReactionResponse);
+    
+    // Récupère la photo du jour (la plus populaire)
+    rpc GetPhotoOfDay (GetPhotoOfDayRequest) returns (GetPhotoOfDayResponse);
+    
+    // Récupère les statistiques d'une photo
+    rpc GetPhotoStats (GetPhotoStatsRequest) returns (GetPhotoStatsResponse);
+}
+
+// === Messages pour IncrementReaction ===
+
+message IncrementReactionRequest {
+    string display_name = 1;  // Nom du photographe
+    int32 photo_id = 2;       // ID de la photo
+    string reaction_type = 3; // Type de réaction (coeur, pouce, etc.)
+}
+
+message IncrementReactionResponse {
+    bool success = 1;
+    string message = 2;
+    int32 total_reactions = 3; // Nombre total de réactions après incrémentation
+}
+
+// === Messages pour GetPhotoOfDay ===
+
+message GetPhotoOfDayRequest {
+    string start_date = 1;  // Format: "2026-01-14T00:00:00Z"
+    string end_date = 2;    // Format: "2026-01-14T23:59:59Z"
+}
+
+message GetPhotoOfDayResponse {
+    bool found = 1;
+    string display_name = 2;
+    int32 photo_id = 3;
+    int32 total_reactions = 4;
+    map<string, int32> reaction_breakdown = 5; // {"coeur": 10, "fire": 5}
+    string photo_url = 6; // URL de la photo
+}
+
+// === Messages pour GetPhotoStats ===
+
+message GetPhotoStatsRequest {
+    string display_name = 1;
+    int32 photo_id = 2;
+}
+
+message GetPhotoStatsResponse {
+    bool found = 1;
+    string display_name = 2;
+    int32 photo_id = 3;
+    int32 total_reactions = 4;
+    map<string, int32> reaction_breakdown = 5;
+    string first_reaction_date = 6;
+    string last_reaction_date = 7;
+}

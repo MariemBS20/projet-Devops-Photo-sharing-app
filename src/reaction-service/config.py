@@ -24,12 +24,17 @@ class Settings(BaseSettings):
     photo_port: int = 8000
     photo_timeout: int = 5
 
+    # Photo of Day gRPC Service Configuration
+    photo_of_day_host: str = "photo-of-day-dev"
+    photo_of_day_port: int = 50052
+    photo_of_day_timeout: int = 5
+
     # API Configuration
     api_title: str = "Reaction Service"
     api_version: str = "1.0.0"
 
     # Reaction Configuration
-    allowed_reactions: list[str] = ["coeur", "pouce", "love", "fire", "wow", "sad","sourire"]
+    allowed_reactions: list[str] = ["coeur", "pouce", "love", "fire", "wow", "sad", "sourire"]
 
     @property
     def mongodb_url(self) -> str:
@@ -50,8 +55,13 @@ class Settings(BaseSettings):
     def photo_service_url(self) -> str:
         """Construct photo service base URL."""
         return f"http://{self.photo_host}:{self.photo_port}"
+    
+    @property
+    def photo_of_day_grpc_address(self) -> str:
+        """Construct Photo of Day gRPC address."""
+        return f"{self.photo_of_day_host}:{self.photo_of_day_port}"
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
 
 # Create singleton instance
 settings = Settings()

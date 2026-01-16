@@ -1,11 +1,14 @@
 name: photoapp
 
 services:
-  # Production/Development API service
+  # ========================================
+  # Photographer Service (REST API)
+  # ========================================
   photographer-dev:
     build:
       context: ./photographer-service
       target: photographer-dev
+    container_name: photographer-dev
     volumes:
       - ./photographer-service:/app
       - /var/run/docker.sock:/var/run/docker.sock
@@ -24,13 +27,16 @@ services:
     command: /app/start-uvicorn.sh
     networks:
       - app-network
-    # profiles:
-    #   - dev  # Only starts with docker compose --profile dev
+    restart: unless-stopped
 
+  # ========================================
+  # Photo Service (REST API)
+  # ========================================
   photo-dev:
     build:
       context: ./photo-service
       target: photo-dev
+    container_name: photo-dev
     volumes:
       - ./photo-service:/app
       - /var/run/docker.sock:/var/run/docker.sock
@@ -44,6 +50,9 @@ services:
       - PHOTOGRAPHER_HOST=photographer-dev
       - PHOTOGRAPHER_PORT=8000
       - TAGS_HOST=tags
+      - TAGS_PORT=50051
+      - PHOTO_OF_DAY_HOST=photo-of-day-service
+      - PHOTO_OF_DAY_PORT=50052
     ports:
       - "8002:8000"
     depends_on:
@@ -51,14 +60,23 @@ services:
         condition: service_healthy
       photographer-dev:
         condition: service_started
+      tags:
+        condition: service_started
+      photo-of-day-service:
+        condition: service_started
     command: /app/start-uvicorn.sh
     networks:
       - app-network
+    restart: unless-stopped
 
+  # ========================================
+  # Reaction Service (REST API)
+  # ========================================
   reaction-dev:
     build:
       context: ./reaction-service
       target: reaction-dev
+    container_name: reaction-dev
     volumes:
       - ./reaction-service:/app
       - /var/run/docker.sock:/var/run/docker.sock
@@ -71,6 +89,10 @@ services:
       - AUTH_DATABASE_NAME=reactions
       - PHOTO_HOST=photo-dev
       - PHOTO_PORT=8000
+      - PHOTOGRAPHER_HOST=photographer-dev
+      - PHOTOGRAPHER_PORT=8000
+      - PHOTO_OF_DAY_HOST=photo-of-day-service
+      - PHOTO_OF_DAY_PORT=50052
     ports:
       - "8003:8000"
     depends_on:
@@ -78,19 +100,68 @@ services:
         condition: service_healthy
       photo-dev:
         condition: service_started
+      photo-of-day-service:
+        condition: service_started
     command: /app/start-uvicorn.sh
     networks:
       - app-network
+    restart: unless-stopped
 
+  # ========================================
+  # Photo of Day Service (gRPC)
+  # ========================================
+  photo-of-day-service:
+    build:
+      context: ./photo-of-day-service
+      target: photo-of-day-dev
+    container_name: photo-of-day-service
+    volumes:
+      - ./photo-of-day-service:/app
+    environment:
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_USER=${MONGO_USER:-}
+      - MONGO_PASSWORD=${MONGO_PASSWORD:-}
+      - DATABASE_NAME=photo_of_day
+      - AUTH_DATABASE_NAME=photo_of_day
+      - GRPC_HOST=0.0.0.0
+      - GRPC_PORT=50052
+      - PHOTO_HOST=photo-dev
+      - PHOTO_PORT=8000
+      - LOG_LEVEL=INFO
+    ports:
+      - "50052:50052"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "python grpc_server.py"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ========================================
+  # Tags Service (gRPC) - External
+  # ========================================
   tags:
     image: "gitlab-registry.imt-atlantique.fr/devops-lab/shared/tags:1.0"
+    container_name: tags-service
     ports:
       - "50051:50051"
     networks:
       - app-network
+    restart: unless-stopped
 
+  # ========================================
+  # MongoDB Database
+  # ========================================
   mongo:
     image: mongo:7.0
+    container_name: mongo
     ports:
       - "27017:27017"
     environment:
@@ -102,6 +173,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
     restart: unless-stopped
     networks:
       - app-network
@@ -113,3 +185,4 @@ volumes:
 networks:
   app-network:
     driver: bridge
+    name: photoapp-network

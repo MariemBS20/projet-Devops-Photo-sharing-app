@@ -1,0 +1,23 @@
+# FastAPI and server
+fastapi==0.115.10
+uvicorn[standard]==0.34.0
+python-multipart==0.0.19  # For file uploads
+
+# Data validation and settings
+pydantic==2.10.5
+pydantic-settings==2.7.0
+
+# MongoDB and ODM
+motor==3.6.0
+pymongo>=4.9,<4.10  # Required by motor 3.6.0
+beanie==1.27.0
+
+# HTTP client
+httpx==0.28.1
+
+# gRPC
+grpcio==1.60.1
+grpcio-tools==1.60.1
+protobuf==4.25.3
+# Image processing
+Pillow==10.4.0

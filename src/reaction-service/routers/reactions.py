@@ -209,7 +209,12 @@ async def update_reaction(
     reaction.reaction = reaction_update.reaction
     reaction.updated_at = datetime.utcnow()
     await reaction.save()
-
+    await photo_of_day_client.update_reaction(
+        display_name=display_name,
+        photo_id=photo_id,
+        old_reaction_type=reaction.reaction,
+        new_reaction_type=reaction_update.reaction
+    )
     logger.info(f"Reaction updated to '{reaction_update.reaction}'")
 
     return ReactionResponse(
@@ -257,5 +262,11 @@ async def delete_reaction(
 
     # Step 3: Delete reaction
     await reaction.delete()
+    await photo_of_day_client.decrement_reaction(
+        display_name=display_name,
+        photo_id=photo_id,
+        reaction_type=reaction.reaction
+    )
+
 
     logger.info(f"Reaction deleted successfully")

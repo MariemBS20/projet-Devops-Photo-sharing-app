@@ -6,8 +6,7 @@ import photo_of_day_pb2 as photo__of__day__pb2
 
 
 class PhotoOfDayServiceStub(object):
-    """Service pour gérer les statistiques des photos
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -18,6 +17,16 @@ class PhotoOfDayServiceStub(object):
         self.IncrementReaction = channel.unary_unary(
                 '/photoofday.PhotoOfDayService/IncrementReaction',
                 request_serializer=photo__of__day__pb2.IncrementReactionRequest.SerializeToString,
+                response_deserializer=photo__of__day__pb2.IncrementReactionResponse.FromString,
+                )
+        self.DecrementReaction = channel.unary_unary(
+                '/photoofday.PhotoOfDayService/DecrementReaction',
+                request_serializer=photo__of__day__pb2.DecrementReactionRequest.SerializeToString,
+                response_deserializer=photo__of__day__pb2.IncrementReactionResponse.FromString,
+                )
+        self.UpdateReaction = channel.unary_unary(
+                '/photoofday.PhotoOfDayService/UpdateReaction',
+                request_serializer=photo__of__day__pb2.UpdateReactionRequest.SerializeToString,
                 response_deserializer=photo__of__day__pb2.IncrementReactionResponse.FromString,
                 )
         self.GetPhotoOfDay = channel.unary_unary(
@@ -33,25 +42,38 @@ class PhotoOfDayServiceStub(object):
 
 
 class PhotoOfDayServiceServicer(object):
-    """Service pour gérer les statistiques des photos
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def IncrementReaction(self, request, context):
-        """Incrémente le compteur de réactions pour une photo
+        """Incrémenter (ajout de réaction)
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DecrementReaction(self, request, context):
+        """✨ NOUVEAU: Décrémenter (suppression de réaction)
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateReaction(self, request, context):
+        """✨ NOUVEAU: Mettre à jour (modification de réaction)
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetPhotoOfDay(self, request, context):
-        """Récupère la photo du jour (la plus populaire)
+        """Photo du jour
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetPhotoStats(self, request, context):
-        """Récupère les statistiques d'une photo
+        """Statistiques
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -63,6 +85,16 @@ def add_PhotoOfDayServiceServicer_to_server(servicer, server):
             'IncrementReaction': grpc.unary_unary_rpc_method_handler(
                     servicer.IncrementReaction,
                     request_deserializer=photo__of__day__pb2.IncrementReactionRequest.FromString,
+                    response_serializer=photo__of__day__pb2.IncrementReactionResponse.SerializeToString,
+            ),
+            'DecrementReaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.DecrementReaction,
+                    request_deserializer=photo__of__day__pb2.DecrementReactionRequest.FromString,
+                    response_serializer=photo__of__day__pb2.IncrementReactionResponse.SerializeToString,
+            ),
+            'UpdateReaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateReaction,
+                    request_deserializer=photo__of__day__pb2.UpdateReactionRequest.FromString,
                     response_serializer=photo__of__day__pb2.IncrementReactionResponse.SerializeToString,
             ),
             'GetPhotoOfDay': grpc.unary_unary_rpc_method_handler(
@@ -83,8 +115,7 @@ def add_PhotoOfDayServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class PhotoOfDayService(object):
-    """Service pour gérer les statistiques des photos
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def IncrementReaction(request,
@@ -99,6 +130,40 @@ class PhotoOfDayService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/photoofday.PhotoOfDayService/IncrementReaction',
             photo__of__day__pb2.IncrementReactionRequest.SerializeToString,
+            photo__of__day__pb2.IncrementReactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DecrementReaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/photoofday.PhotoOfDayService/DecrementReaction',
+            photo__of__day__pb2.DecrementReactionRequest.SerializeToString,
+            photo__of__day__pb2.IncrementReactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateReaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/photoofday.PhotoOfDayService/UpdateReaction',
+            photo__of__day__pb2.UpdateReactionRequest.SerializeToString,
             photo__of__day__pb2.IncrementReactionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

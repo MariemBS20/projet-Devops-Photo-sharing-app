@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12photo_of_day.proto\x12\nphotoofday\"Y\n\x18IncrementReactionRequest\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x10\n\x08photo_id\x18\x02 \x01(\x05\x12\x15\n\rreaction_type\x18\x03 \x01(\t\"V\n\x19IncrementReactionResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x17\n\x0ftotal_reactions\x18\x03 \x01(\x05\"<\n\x14GetPhotoOfDayRequest\x12\x12\n\nstart_date\x18\x01 \x01(\t\x12\x10\n\x08\x65nd_date\x18\x02 \x01(\t\"\x8a\x02\n\x15GetPhotoOfDayResponse\x12\r\n\x05\x66ound\x18\x01 \x01(\x08\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x10\n\x08photo_id\x18\x03 \x01(\x05\x12\x17\n\x0ftotal_reactions\x18\x04 \x01(\x05\x12T\n\x12reaction_breakdown\x18\x05 \x03(\x0b\x32\x38.photoofday.GetPhotoOfDayResponse.ReactionBreakdownEntry\x12\x11\n\tphoto_url\x18\x06 \x01(\t\x1a\x38\n\x16ReactionBreakdownEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\">\n\x14GetPhotoStatsRequest\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x10\n\x08photo_id\x18\x02 \x01(\x05\"\xb0\x02\n\x15GetPhotoStatsResponse\x12\r\n\x05\x66ound\x18\x01 \x01(\x08\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x10\n\x08photo_id\x18\x03 \x01(\x05\x12\x17\n\x0ftotal_reactions\x18\x04 \x01(\x05\x12T\n\x12reaction_breakdown\x18\x05 \x03(\x0b\x32\x38.photoofday.GetPhotoStatsResponse.ReactionBreakdownEntry\x12\x1b\n\x13\x66irst_reaction_date\x18\x06 \x01(\t\x12\x1a\n\x12last_reaction_date\x18\x07 \x01(\t\x1a\x38\n\x16ReactionBreakdownEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x32\xa1\x02\n\x11PhotoOfDayService\x12`\n\x11IncrementReaction\x12$.photoofday.IncrementReactionRequest\x1a%.photoofday.IncrementReactionResponse\x12T\n\rGetPhotoOfDay\x12 .photoofday.GetPhotoOfDayRequest\x1a!.photoofday.GetPhotoOfDayResponse\x12T\n\rGetPhotoStats\x12 .photoofday.GetPhotoStatsRequest\x1a!.photoofday.GetPhotoStatsResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12photo_of_day.proto\x12\nphotoofday\"Y\n\x18IncrementReactionRequest\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x10\n\x08photo_id\x18\x02 \x01(\x05\x12\x15\n\rreaction_type\x18\x03 \x01(\t\"V\n\x19IncrementReactionResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x17\n\x0ftotal_reactions\x18\x03 \x01(\x05\"Y\n\x18\x44\x65\x63rementReactionRequest\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x10\n\x08photo_id\x18\x02 \x01(\x05\x12\x15\n\rreaction_type\x18\x03 \x01(\t\"u\n\x15UpdateReactionRequest\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x10\n\x08photo_id\x18\x02 \x01(\x05\x12\x19\n\x11old_reaction_type\x18\x03 \x01(\t\x12\x19\n\x11new_reaction_type\x18\x04 \x01(\t\"F\n\x14GetPhotoOfDayRequest\x12\x17\n\x0fstart_timestamp\x18\x01 \x01(\x03\x12\x15\n\rend_timestamp\x18\x02 \x01(\x03\"\x8a\x02\n\x15GetPhotoOfDayResponse\x12\r\n\x05\x66ound\x18\x01 \x01(\x08\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x10\n\x08photo_id\x18\x03 \x01(\x05\x12\x17\n\x0ftotal_reactions\x18\x04 \x01(\x05\x12T\n\x12reaction_breakdown\x18\x05 \x03(\x0b\x32\x38.photoofday.GetPhotoOfDayResponse.ReactionBreakdownEntry\x12\x11\n\tphoto_url\x18\x06 \x01(\t\x1a\x38\n\x16ReactionBreakdownEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\">\n\x14GetPhotoStatsRequest\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x10\n\x08photo_id\x18\x02 \x01(\x05\"\xba\x02\n\x15GetPhotoStatsResponse\x12\r\n\x05\x66ound\x18\x01 \x01(\x08\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x10\n\x08photo_id\x18\x03 \x01(\x05\x12\x17\n\x0ftotal_reactions\x18\x04 \x01(\x05\x12T\n\x12reaction_breakdown\x18\x05 \x03(\x0b\x32\x38.photoofday.GetPhotoStatsResponse.ReactionBreakdownEntry\x12 \n\x18\x66irst_reaction_timestamp\x18\x06 \x01(\x03\x12\x1f\n\x17last_reaction_timestamp\x18\x07 \x01(\x03\x1a\x38\n\x16ReactionBreakdownEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x05:\x02\x38\x01\x32\xdf\x03\n\x11PhotoOfDayService\x12`\n\x11IncrementReaction\x12$.photoofday.IncrementReactionRequest\x1a%.photoofday.IncrementReactionResponse\x12`\n\x11\x44\x65\x63rementReaction\x12$.photoofday.DecrementReactionRequest\x1a%.photoofday.IncrementReactionResponse\x12Z\n\x0eUpdateReaction\x12!.photoofday.UpdateReactionRequest\x1a%.photoofday.IncrementReactionResponse\x12T\n\rGetPhotoOfDay\x12 .photoofday.GetPhotoOfDayRequest\x1a!.photoofday.GetPhotoOfDayResponse\x12T\n\rGetPhotoStats\x12 .photoofday.GetPhotoStatsRequest\x1a!.photoofday.GetPhotoStatsResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -29,18 +29,22 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['_INCREMENTREACTIONREQUEST']._serialized_end=123
   _globals['_INCREMENTREACTIONRESPONSE']._serialized_start=125
   _globals['_INCREMENTREACTIONRESPONSE']._serialized_end=211
-  _globals['_GETPHOTOOFDAYREQUEST']._serialized_start=213
-  _globals['_GETPHOTOOFDAYREQUEST']._serialized_end=273
-  _globals['_GETPHOTOOFDAYRESPONSE']._serialized_start=276
-  _globals['_GETPHOTOOFDAYRESPONSE']._serialized_end=542
-  _globals['_GETPHOTOOFDAYRESPONSE_REACTIONBREAKDOWNENTRY']._serialized_start=486
-  _globals['_GETPHOTOOFDAYRESPONSE_REACTIONBREAKDOWNENTRY']._serialized_end=542
-  _globals['_GETPHOTOSTATSREQUEST']._serialized_start=544
-  _globals['_GETPHOTOSTATSREQUEST']._serialized_end=606
-  _globals['_GETPHOTOSTATSRESPONSE']._serialized_start=609
-  _globals['_GETPHOTOSTATSRESPONSE']._serialized_end=913
-  _globals['_GETPHOTOSTATSRESPONSE_REACTIONBREAKDOWNENTRY']._serialized_start=486
-  _globals['_GETPHOTOSTATSRESPONSE_REACTIONBREAKDOWNENTRY']._serialized_end=542
-  _globals['_PHOTOOFDAYSERVICE']._serialized_start=916
-  _globals['_PHOTOOFDAYSERVICE']._serialized_end=1205
+  _globals['_DECREMENTREACTIONREQUEST']._serialized_start=213
+  _globals['_DECREMENTREACTIONREQUEST']._serialized_end=302
+  _globals['_UPDATEREACTIONREQUEST']._serialized_start=304
+  _globals['_UPDATEREACTIONREQUEST']._serialized_end=421
+  _globals['_GETPHOTOOFDAYREQUEST']._serialized_start=423
+  _globals['_GETPHOTOOFDAYREQUEST']._serialized_end=493
+  _globals['_GETPHOTOOFDAYRESPONSE']._serialized_start=496
+  _globals['_GETPHOTOOFDAYRESPONSE']._serialized_end=762
+  _globals['_GETPHOTOOFDAYRESPONSE_REACTIONBREAKDOWNENTRY']._serialized_start=706
+  _globals['_GETPHOTOOFDAYRESPONSE_REACTIONBREAKDOWNENTRY']._serialized_end=762
+  _globals['_GETPHOTOSTATSREQUEST']._serialized_start=764
+  _globals['_GETPHOTOSTATSREQUEST']._serialized_end=826
+  _globals['_GETPHOTOSTATSRESPONSE']._serialized_start=829
+  _globals['_GETPHOTOSTATSRESPONSE']._serialized_end=1143
+  _globals['_GETPHOTOSTATSRESPONSE_REACTIONBREAKDOWNENTRY']._serialized_start=706
+  _globals['_GETPHOTOSTATSRESPONSE_REACTIONBREAKDOWNENTRY']._serialized_end=762
+  _globals['_PHOTOOFDAYSERVICE']._serialized_start=1146
+  _globals['_PHOTOOFDAYSERVICE']._serialized_end=1625
 # @@protoc_insertion_point(module_scope)

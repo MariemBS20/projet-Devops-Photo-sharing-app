@@ -121,25 +121,76 @@ class PhotoOfDayClient:
         self.stub = None
 
     async def connect(self):
+        if self.stub is not None:
+            return
+
         address = f"{settings.PHOTO_OF_DAY_HOST}:{settings.PHOTO_OF_DAY_PORT}"
         logger.info(f"Connecting to Photo of Day service at {address}")
+
         self.channel = insecure_channel(address)
         self.stub = photo_of_day_pb2_grpc.PhotoOfDayServiceStub(self.channel)
+
         logger.info("✅ Connected to Photo of Day service")
 
-    async def increment_reaction(self, display_name: str, photo_id: int, reaction_type: str):
-        if self.stub is None:
-            await self.connect()
-        request = photo_of_day_pb2.IncrementReactionRequest(
-            display_name=display_name,
-            photo_id=photo_id,
-            reaction_type=reaction_type
-        )
+    async def increment_reaction(self, display_name: str, photo_id: int, reaction_type: str) -> bool:
         try:
-            logger.info(f"📤 Sending IncrementReaction request for {display_name}/{photo_id} -> {reaction_type}")
+            await self.connect()
+
+            request = photo_of_day_pb2.IncrementReactionRequest(
+                display_name=display_name,
+                photo_id=photo_id,
+                reaction_type=reaction_type
+            )
+
             response = await self.stub.IncrementReaction(request, timeout=5.0)
-            logger.info(f"✅ Reaction incremented: {response.success}")
-        except grpc.RpcError as e:
-            logger.error(f"❌ gRPC error: {e.code()} - {e.details()}")
+            logger.info(f"✅ Reaction incremented: total={response.total_reactions}")
+            return response.success
+
+        except Exception as e:
+            logger.error(f"❌ Error incrementing reaction: {e}")
+            return False
+
+    async def decrement_reaction(self, display_name: str, photo_id: int, reaction_type: str) -> bool:
+        try:
+            await self.connect()
+
+            request = photo_of_day_pb2.DecrementReactionRequest(
+                display_name=display_name,
+                photo_id=photo_id,
+                reaction_type=reaction_type
+            )
+
+            response = await self.stub.DecrementReaction(request, timeout=5.0)
+            logger.info(f"✅ Reaction removed: total={response.total_reactions}")
+            return response.success
+
+        except Exception as e:
+            logger.error(f"❌ Error decrementing reaction: {e}")
+            return False
+
+    async def update_reaction(
+        self,
+        display_name: str,
+        photo_id: int,
+        old_reaction_type: str,
+        new_reaction_type: str
+    ) -> bool:
+        try:
+            await self.connect()
+
+            request = photo_of_day_pb2.UpdateReactionRequest(
+                display_name=display_name,
+                photo_id=photo_id,
+                old_reaction_type=old_reaction_type,
+                new_reaction_type=new_reaction_type
+            )
+
+            response = await self.stub.UpdateReaction(request, timeout=5.0)
+            logger.info(f"✅ Reaction updated: total={response.total_reactions}")
+            return response.success
+
+        except Exception as e:
+            logger.error(f"❌ Error updating reaction: {e}")
+            return False
 
 photo_of_day_client = PhotoOfDayClient()

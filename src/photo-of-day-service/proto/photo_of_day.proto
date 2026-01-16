@@ -2,37 +2,54 @@ syntax = "proto3";
 
 package photoofday;
 
-// Service pour gérer les statistiques des photos
 service PhotoOfDayService {
-    // Incrémente le compteur de réactions pour une photo
+    // Incrémenter (ajout de réaction)
     rpc IncrementReaction (IncrementReactionRequest) returns (IncrementReactionResponse);
     
-    // Récupère la photo du jour (la plus populaire)
+    // ✨ NOUVEAU: Décrémenter (suppression de réaction)
+    rpc DecrementReaction (DecrementReactionRequest) returns (IncrementReactionResponse);
+    
+    // ✨ NOUVEAU: Mettre à jour (modification de réaction)
+    rpc UpdateReaction (UpdateReactionRequest) returns (IncrementReactionResponse);
+    
+    // Photo du jour
     rpc GetPhotoOfDay (GetPhotoOfDayRequest) returns (GetPhotoOfDayResponse);
     
-    // Récupère les statistiques d'une photo
+    // Statistiques
     rpc GetPhotoStats (GetPhotoStatsRequest) returns (GetPhotoStatsResponse);
 }
 
-// === Messages pour IncrementReaction ===
-
+// Messages existants...
 message IncrementReactionRequest {
-    string display_name = 1;  // Nom du photographe
-    int32 photo_id = 2;       // ID de la photo
-    string reaction_type = 3; // Type de réaction (coeur, pouce, etc.)
+    string display_name = 1;
+    int32 photo_id = 2;
+    string reaction_type = 3;
 }
 
 message IncrementReactionResponse {
     bool success = 1;
     string message = 2;
-    int32 total_reactions = 3; // Nombre total de réactions après incrémentation
+    int32 total_reactions = 3;
 }
 
-// === Messages pour GetPhotoOfDay ===
+// ✨ NOUVEAUX messages
+message DecrementReactionRequest {
+    string display_name = 1;
+    int32 photo_id = 2;
+    string reaction_type = 3;  // Type de réaction supprimée
+}
 
+message UpdateReactionRequest {
+    string display_name = 1;
+    int32 photo_id = 2;
+    string old_reaction_type = 3;  // Ancienne réaction
+    string new_reaction_type = 4;  // Nouvelle réaction
+}
+
+// Messages existants pour GetPhotoOfDay et GetPhotoStats...
 message GetPhotoOfDayRequest {
-    string start_date = 1;  // Format: "2026-01-14T00:00:00Z"
-    string end_date = 2;    // Format: "2026-01-14T23:59:59Z"
+    int64 start_timestamp = 1;
+    int64 end_timestamp = 2;
 }
 
 message GetPhotoOfDayResponse {
@@ -40,11 +57,9 @@ message GetPhotoOfDayResponse {
     string display_name = 2;
     int32 photo_id = 3;
     int32 total_reactions = 4;
-    map<string, int32> reaction_breakdown = 5; // {"coeur": 10, "fire": 5}
-    string photo_url = 6; // URL de la photo
+    map<string, int32> reaction_breakdown = 5;
+    string photo_url = 6;
 }
-
-// === Messages pour GetPhotoStats ===
 
 message GetPhotoStatsRequest {
     string display_name = 1;
@@ -57,6 +72,6 @@ message GetPhotoStatsResponse {
     int32 photo_id = 3;
     int32 total_reactions = 4;
     map<string, int32> reaction_breakdown = 5;
-    string first_reaction_date = 6;
-    string last_reaction_date = 7;
+    int64 first_reaction_timestamp = 6;
+    int64 last_reaction_timestamp = 7;
 }

@@ -6,10 +6,10 @@ service PhotoOfDayService {
     // Incrémenter (ajout de réaction)
     rpc IncrementReaction (IncrementReactionRequest) returns (IncrementReactionResponse);
     
-    // ✨ NOUVEAU: Décrémenter (suppression de réaction)
+    //  NOUVEAU: Décrémenter (suppression de réaction)
     rpc DecrementReaction (DecrementReactionRequest) returns (IncrementReactionResponse);
     
-    // ✨ NOUVEAU: Mettre à jour (modification de réaction)
+    // NOUVEAU: Mettre à jour (modification de réaction)
     rpc UpdateReaction (UpdateReactionRequest) returns (IncrementReactionResponse);
     
     // Photo du jour

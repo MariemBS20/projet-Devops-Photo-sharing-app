@@ -23,7 +23,11 @@ class Settings(BaseSettings):
     # Tags Service Configuration (gRPC)
     tags_host: str = "tags-service"
     tags_port: int = 50051
-    
+    # Photo of day Service Configuration (gRPC)
+
+    photo_of_day_grpc_host: str = "photo-of-day-service"  # ou localhost si test local
+    photo_of_day_grpc_port: int = 50052
+
     # API Configuration
     api_title: str = "Photo Service"
     api_version: str = "1.0.0"

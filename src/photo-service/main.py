@@ -10,7 +10,7 @@ from exceptions import database_exception_handler
 
 from config import settings
 from database import lifespan
-from routers import gallery, photo
+from routers import gallery, photo,photo_of_day
 from clients import tags_client
 
 # Configure logging
@@ -83,6 +83,7 @@ app.add_exception_handler(
 # Include routers
 app.include_router(gallery.router)
 app.include_router(photo.router)
+app.include_router(photo_of_day.router)
 
 
 @app.get("/", tags=["root"])

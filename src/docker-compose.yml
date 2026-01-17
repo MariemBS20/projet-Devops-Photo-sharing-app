@@ -92,7 +92,8 @@ services:
       - PHOTOGRAPHER_HOST=photographer-dev
       - PHOTOGRAPHER_PORT=8000
       - PHOTO_OF_DAY_HOST=photo-of-day-service
-      - PHOTO_OF_DAY_PORT=50052
+      - PHOTO_OF_DAY_PORT=50052 
+      - TZ=Europe/Paris
     ports:
       - "8003:8000"
     depends_on:

@@ -8,6 +8,15 @@ FROM python:3.12.8-slim AS base
 
 WORKDIR /app
 
+# Mandatory for APT_CACHE variable (see Dockerfile doc)
+ARG APT_CACHE
+
+# Configure APT proxy if APT_CACHE is set
+RUN if [ -n "$APT_CACHE" ]; then \
+      echo "Acquire::http::Proxy \"$APT_CACHE\";" > /etc/apt/apt.conf.d/01proxy; \
+      echo "Acquire::http::Proxy \"$APT_CACHE\";" > /etc/apt/apt.conf; \
+    fi
+
 # Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

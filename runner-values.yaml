@@ -1,0 +1,71 @@
+# GitLab connection
+gitlabUrl: https://gitlab-df.imt-atlantique.fr/
+
+# Runner registration token (you'll need to replace this)
+runnerRegistrationToken: "glrt-oCc881RW6e7CFVUIN-wWu286MQpwOjJrdAp0OjMKdToxODET.01.1c1ysgust"
+
+# Concurrent jobs
+concurrent: 10
+
+# Check interval for new jobs
+checkInterval: 30
+
+# Runner configuration
+runners:
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        namespace = "{{.Release.Namespace}}"
+        image = "alpine:3.18"
+
+        # Proxy configuration for all pods
+        [runners.kubernetes.pod_annotations]
+          "proxy.configuration/applied" = "true"
+
+        # Environment variables for proxy
+        [[runners.kubernetes.pod_spec]]
+          [runners.kubernetes.pod_spec.containers]
+            [[runners.kubernetes.pod_spec.containers.env]]
+              name = "http_proxy"
+              value = "http://192.108.115.2:8080"
+            [[runners.kubernetes.pod_spec.containers.env]]
+              name = "https_proxy"
+              value = "http://192.108.115.2:8080"
+            [[runners.kubernetes.pod_spec.containers.env]]
+              name = "HTTP_PROXY"
+              value = "http://192.108.115.2:8080"
+            [[runners.kubernetes.pod_spec.containers.env]]
+              name = "HTTPS_PROXY"
+              value = "http://192.108.115.2:8080"
+            [[runners.kubernetes.pod_spec.containers.env]]
+              name = "no_proxy"
+              value = "127.0.0.1,localhost,container-registry-cache.imt-atlantique.fr,registry.cloud.rennes.enst-bretagne.fr,openstack-enseignement.imt-atlantique.fr,gitlab.imt-atlantique.fr,gitlab-df.imt-atlantique.fr,gitlab-df-registry.imt-atlantique.fr"
+            [[runners.kubernetes.pod_spec.containers.env]]
+              name = "NO_PROXY"
+              value = "127.0.0.1,localhost,container-registry-cache.imt-atlantique.fr,registry.cloud.rennes.enst-bretagne.fr,openstack-enseignement.imt-atlantique.fr,gitlab.imt-atlantique.fr,gitlab-df.imt-atlantique.fr,gitlab-df-registry.imt-atlantique.fr"
+
+# RBAC configuration - gives runner full permissions in its namespace
+rbac:
+  create: true
+  rules:
+    - apiGroups: [""]
+      resources: ["*"]
+      verbs: ["*"]
+    - apiGroups: ["apps"]
+      resources: ["*"]
+      verbs: ["*"]
+    - apiGroups: ["batch"]
+      resources: ["*"]
+      verbs: ["*"]
+    - apiGroups: ["extensions"]
+      resources: ["*"]
+      verbs: ["*"]
+
+# Resources for the runner pod itself
+resources:
+  limits:
+    memory: 256Mi
+    cpu: 200m
+  requests:
+    memory: 128Mi
+    cpu: 100m

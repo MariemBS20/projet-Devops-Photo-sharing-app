@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: photographer-service
+  namespace: production
+  labels:
+    app: photographer-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: photographer-service
+  template:
+    metadata:
+      labels:
+        app: photographer-service
+    spec:
+      containers:
+      - name: photographer-service
+        image: ${CI_REGISTRY_IMAGE}/photographer:latest
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: MONGO_HOST
+          value: "mongo-service"
+        - name: MONGO_PORT
+          value: "27017"
+        - name: DATABASE_NAME
+          value: "photographers"
+        - name: AUTH_DATABASE_NAME
+          value: "photographers"
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: photographer-service
+  namespace: production
+  labels:
+    app: photographer-service
+spec:
+  selector:
+    app: photographer-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    name: http
+  type: ClusterIP

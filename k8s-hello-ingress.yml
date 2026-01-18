@@ -7,7 +7,7 @@ metadata:
     cert-manager.io/issuer: my-root-ca-issuer
 spec:
   rules:
-  - host: hello-xy.example.com 
+  - host: hello-07.example.com 
     http:
       paths:
       - path: /
@@ -19,5 +19,5 @@ spec:
               number: 80
   tls:
   - hosts:
-    - hello-xy.example.com
+    - hello-07.example.com
     secretName: hello-secret

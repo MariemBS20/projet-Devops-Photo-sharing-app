@@ -7,6 +7,9 @@ variables:
   PHOTOGRAPHER_IMAGE: $CI_REGISTRY_IMAGE/photographer-service
   DOCKER_DRIVER: overlay2
   DOCKER_BUILDKIT: 1
+kubernetes:
+  namespace: production
+  service_account: gitlab-deployer
 
 test_photographer:
   stage: test

@@ -73,3 +73,65 @@ deploy_photographer:
   environment:
     name: production
 
+# ========== PHOTO SERVICE ==========
+test_photo:
+  stage: test
+  tags:
+    - kubernetes
+  variables:
+    MONGO_HOST: mongo
+    MONGO_PORT: 27017
+    DATABASE_NAME: photos_test
+  image: gitlab-registry.imt-atlantique.fr/devops-lab/shared/photoapp-fastapi-microservice-test:1.0
+  script:
+    - cd src/photo-service
+    - pytest -p no:warnings
+  services:
+    - name: mongo:7.0
+      alias: mongo
+
+build_photo:
+  stage: release
+  tags:
+    - kubernetes
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  variables:
+    APT_CACHE: http://apt-cacher-01.priv.enst-bretagne.fr:3142
+    HTTP_PROXY: http://192.108.115.2:8080
+    HTTPS_PROXY: http://192.108.115.2:8080
+    NO_PROXY: gitlab-df.imt-atlantique.fr,gitlab-df-registry.imt-atlantique.fr
+  before_script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+  script:
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}/src/photo-service"
+      --dockerfile "${CI_PROJECT_DIR}/src/photo-service/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/photo:${CI_COMMIT_SHORT_SHA}"
+      --target production
+      --build-arg HTTP_PROXY=${HTTP_PROXY}
+      --build-arg HTTPS_PROXY=${HTTPS_PROXY}
+      --build-arg APT_CACHE=${APT_CACHE}
+
+deploy_photo:
+  stage: deploy
+  tags:
+    - kubernetes
+  image:
+    name: bitnami/kubectl
+    entrypoint: [""]
+  before_script:
+    echo "${KUBE_CA}" | base64 -d > /tmp/ca.crt
+    - kubectl config set-cluster k8s --server="${KUBE_URL}" --certificate-authority=/tmp/ca.crt --embed-certs=true
+    - kubectl config set-credentials gitlab-deployer --token="${KUBE_TOKEN}"
+    - kubectl config set-context default --cluster=k8s --user=gitlab-deployer --namespace=production
+    - kubectl config use-context default
+  script:
+    - cd src/photo-service
+    - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photo.yml
+    - kubectl apply -f k8s-photo.yml
+  environment:
+    name: production

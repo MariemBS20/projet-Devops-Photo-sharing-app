@@ -125,11 +125,11 @@ deploy_photo:
     entrypoint: [""]
   before_script:
     before_script:
-  - echo "${KUBE_CA}" | base64 -d > /tmp/ca.crt
-  - kubectl config set-cluster k8s --server="${KUBE_URL}" --certificate-authority=/tmp/ca.crt --embed-certs=true
-  - kubectl config set-credentials gitlab-deployer --token="${KUBE_TOKEN}"
-  - kubectl config set-context default --cluster=k8s --user=gitlab-deployer --namespace=production
-  - kubectl config use-context default
+    - echo "${KUBE_CA}" | base64 -d > /tmp/ca.crt
+    - kubectl config set-cluster k8s --server="${KUBE_URL}" --certificate-authority=/tmp/ca.crt --embed-certs=true
+    - kubectl config set-credentials gitlab-deployer --token="${KUBE_TOKEN}"
+    - kubectl config set-context default --cluster=k8s --user=gitlab-deployer --namespace=production
+    - kubectl config use-context default
 
   script:
     - cd src/photo-service

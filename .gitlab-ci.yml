@@ -8,9 +8,6 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_BUILDKIT: 1
   
-kubernetes:
-  namespace: production
-  service_account: gitlab-deployer
 
 test_photographer:
   stage: test
@@ -70,6 +67,9 @@ deploy_photographer:
     - kubectl config set-credentials gitlab-deployer --token="${KUBE_TOKEN}"
     - kubectl config set-context default --cluster=k8s --user=gitlab-deployer --namespace=production
     - kubectl config use-context default
+  variables:
+    KUBERNETES_SERVICE_ACCOUNT: "gitlab-deployer"  # <-- ServiceAccount à utiliser
+    KUBE_NAMESPACE: "production"
   script:
     - cd src/photographer-service
     - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photographer.yml

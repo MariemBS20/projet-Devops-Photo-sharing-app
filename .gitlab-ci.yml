@@ -68,8 +68,8 @@ deploy_photographer:
     - kubectl config use-context default
   script:
     - cd src/photo-service
-    - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photo.yml
-    - kubectl apply -f k8s-photo.yml
+    - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photographer.yml
+    - kubectl apply -f k8s-photographer.yml
   environment:
     name: production
 

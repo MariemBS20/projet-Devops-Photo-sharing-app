@@ -8,7 +8,6 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_BUILDKIT: 1
 
-# ------------------ TEST ------------------
 test_photographer:
   stage: test
   tags:
@@ -20,13 +19,12 @@ test_photographer:
     AUTH_DATABASE_NAME: photographers_test
   image: gitlab-registry.imt-atlantique.fr/devops-lab/shared/photoapp-fastapi-microservice-test:1.0
   script:
-    - cd src/photographer-service
-    - pytest -p no:warnings
+  - cd src/photographer-service
+  - pytest -p no:warnings
   services:
-    - name: mongo:7.0
-      alias: mongo
+  - name: mongo:7.0
+    alias: mongo
 
-# ------------------ BUILD ------------------
 build_photographer:
   stage: release
   tags:
@@ -34,6 +32,7 @@ build_photographer:
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
+  # These variables are needed to make executor image able to download images
   variables:
     APT_CACHE: http://apt-cacher-01.priv.enst-bretagne.fr:3142
     HTTP_PROXY: http://192.108.115.2:8080
@@ -42,11 +41,17 @@ build_photographer:
   before_script:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
- script:
-  - /kaniko/executor --context "${CI_PROJECT_DIR}/src/photographer-service" --dockerfile "${CI_PROJECT_DIR}/src/photographer-service/Dockerfile" --destination "${CI_REGISTRY_IMAGE}/photographer:${CI_COMMIT_SHORT_SHA}" --target production --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTPS_PROXY} --build-arg APT_CACHE=${APT_CACHE}
+  script:
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}/src/photographer-service"
+      --dockerfile "${CI_PROJECT_DIR}/src/photographer-service/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/photographer:${CI_COMMIT_SHORT_SHA}"
+      --target production
+      --build-arg HTTP_PROXY=${HTTP_PROXY}
+      --build-arg HTTPS_PROXY=${HTTPS_PROXY}
+      --build-arg APT_CACHE=${APT_CACHE}
 
-
-# ------------------ DEPLOY PHOTOGRAPHER ------------------
 deploy_photographer:
   stage: deploy
   tags:
@@ -55,35 +60,16 @@ deploy_photographer:
     name: bitnami/kubectl
     entrypoint: [""]
   before_script:
+    # Configure kubectl with the deployment ServiceAccount
     - echo "${KUBE_CA}" | base64 -d > /tmp/ca.crt
     - kubectl config set-cluster k8s --server="${KUBE_URL}" --certificate-authority=/tmp/ca.crt --embed-certs=true
     - kubectl config set-credentials deployer --token="${KUBE_TOKEN}"
     - kubectl config set-context default --cluster=k8s --user=deployer --namespace=production
     - kubectl config use-context default
   script:
-    # Utilise le YAML existant dans photo-service pour le deploy
-    - kubectl apply -f src/photo-service/k8s-photo.yml
-    - kubectl apply -f src/photo-service/k8s-photo-ingress.yml
+    - cd src/photo-service
+    - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photo.yml
+    - kubectl apply -f k8s-photo.yml
   environment:
     name: production
 
-# ------------------ DEPLOY TAGS ------------------
-deploy_tags:
-  stage: deploy
-  tags:
-    - kubernetes
-  image:
-    name: bitnami/kubectl
-    entrypoint: [""]
-  before_script:
-    - echo "${KUBE_CA}" | base64 -d > /tmp/ca.crt
-    - kubectl config set-cluster k8s --server="${KUBE_URL}" --certificate-authority=/tmp/ca.crt --embed-certs=true
-    - kubectl config set-credentials deployer --token="${KUBE_TOKEN}"
-    - kubectl config set-context default --cluster=k8s --user=deployer --namespace=production
-    - kubectl config use-context default
-  script:
-    # Comme il n’y a pas de tags-service, on utilise les mêmes fichiers YAML que photo-service
-    - kubectl apply -f src/photo-service/k8s-photo.yml
-    - kubectl apply -f src/photo-service/k8s-photo-ingress.yml
-  environment:
-    name: production

@@ -67,7 +67,7 @@ deploy_photographer:
     - kubectl config set-context default --cluster=k8s --user=gitlab-deployer --namespace=production
     - kubectl config use-context default
   script:
-    - cd src/photo-service
+    - cd src/photographer-service
     - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photographer.yml
     - kubectl apply -f k8s-photographer.yml
   environment:

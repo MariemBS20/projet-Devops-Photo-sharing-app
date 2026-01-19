@@ -23,7 +23,7 @@ spec:
           name: http
         env:
         - name: MONGO_HOST
-          value: "mongodb"
+          value: "mongo"
         - name: MONGO_PORT
           value: "27017"
         - name: DATABASE_NAME

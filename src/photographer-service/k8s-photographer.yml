@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: photographer-service
-        image: gitlab-df-registry.imt-atlantique.fr/devops/devops-s26-07/photographer
+        image: gitlab-df-registry.imt-atlantique.fr/devops/devops-s26-07/photographer:latest
         ports:
         - containerPort: 80
           name: http

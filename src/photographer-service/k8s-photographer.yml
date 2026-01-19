@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: photographer-service
-        image: ${CI_REGISTRY_IMAGE}/photographer:latest
+        image: gitlab-devops.cloud.rennes.enst-bretagne.fr:4567/ablanc/devops-f22-g00/photographer:latest
         ports:
         - containerPort: 80
           name: http

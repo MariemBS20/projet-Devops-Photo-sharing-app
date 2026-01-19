@@ -66,6 +66,7 @@ deploy_photographer:
     - kubectl config set-cluster k8s --server="${KUBE_URL}" --certificate-authority=/tmp/ca.crt --embed-certs=true
     - kubectl config set-credentials gitlab-deployer --token="${KUBE_TOKEN}"
     - kubectl config set-context default --cluster=k8s --user=gitlab-deployer --namespace=production
+    --destination "${CI_REGISTRY_IMAGE}/photo:latest"
     - kubectl config use-context default
   variables:
     KUBERNETES_SERVICE_ACCOUNT: "gitlab-deployer"  # <-- ServiceAccount à utiliser
@@ -74,6 +75,7 @@ deploy_photographer:
     - cd src/photographer-service
     - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photographer.yml
     - kubectl apply -f k8s-photographer.yml
+    
   environment:
     name: production
 
@@ -115,7 +117,7 @@ build_photo:
       --context "${CI_PROJECT_DIR}/src/photo-service"
       --dockerfile "${CI_PROJECT_DIR}/src/photo-service/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}/photo:${CI_COMMIT_SHORT_SHA}"
-      --destination "${CI_REGISTRY_IMAGE}/photographer:latest"
+      --destination "${CI_REGISTRY_IMAGE}/photo:latest"
       --target production
       --build-arg HTTP_PROXY=${HTTP_PROXY}
       --build-arg HTTPS_PROXY=${HTTPS_PROXY}

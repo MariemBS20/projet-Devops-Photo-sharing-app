@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: photo-service
-          image: gitlab-devops.cloud.rennes.enst-bretagne.fr:4567/ablanc/devops-f22-g00/photo:latest 
+          image: gitlab-df-registry.imt-atlantique.fr/devops/devops-s26-07/photo:latest
           env:
           - name: LOG_LEVEL
             value: DEBUG

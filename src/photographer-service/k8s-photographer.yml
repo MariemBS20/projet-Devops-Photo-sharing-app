@@ -19,7 +19,7 @@ spec:
       - name: photographer-service
         image: gitlab-df-registry.imt-atlantique.fr/devops/devops-s26-07/photographer:latest
         ports:
-        - containerPort: 80
+        - containerPort: 8000
           name: http
         env:
         - name: MONGO_HOST
@@ -69,6 +69,6 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 80
+    targetPort: 8000
     name: http
   type: ClusterIP

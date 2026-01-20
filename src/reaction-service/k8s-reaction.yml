@@ -33,15 +33,17 @@ spec:
               value: DEBUG
             - name: MONGO_HOST
               value: mongodb
-            # si ton reaction-service communique avec d'autres services,
-            # ajoute-les ici (exemple)
-            # - name: PHOTO_HOST
-            #   value: photo-service
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "1"
-          ports:
-            - containerPort: 80
-      imagePullSecrets:
-        - name: regcred
+            - name: MONGO_PORT
+              value: "27017"
+            - name: DATABASE_NAME
+              value: "reactions"
+            - name: AUTH_DATABASE_NAME
+              value: "reactions"
+              resources:
+                limits:
+                  memory: "512Mi"
+                  cpu: "1"
+              ports:
+                - containerPort: 80
+          imagePullSecrets:
+            - name: regcred

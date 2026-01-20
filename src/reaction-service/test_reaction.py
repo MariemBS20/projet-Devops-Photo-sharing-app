@@ -11,7 +11,7 @@ from models import Reaction
 
 
 # Configuration de la base de données de test
-TEST_MONGODB_URL = "mongodb://photoapp-mongo-1:27017"
+TEST_MONGODB_URL = "mongodb://mongodb:27017"
 TEST_DB_NAME = "reaction_service_test"
 
 

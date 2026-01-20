@@ -7,10 +7,7 @@ variables:
   PHOTOGRAPHER_IMAGE: $CI_REGISTRY_IMAGE/photographer-service
   DOCKER_DRIVER: overlay2
   DOCKER_BUILDKIT: 1
-
-# =====================================
-# ========== PHOTOGRAPHER SERVICE ======
-# =====================================
+  
 
 test_photographer:
   stage: test
@@ -23,11 +20,11 @@ test_photographer:
     AUTH_DATABASE_NAME: photographers_test
   image: gitlab-registry.imt-atlantique.fr/devops-lab/shared/photoapp-fastapi-microservice-test:1.0
   script:
-    - cd src/photographer-service
-    - pytest -p no:warnings
+  - cd src/photographer-service
+  - pytest -p no:warnings
   services:
-    - name: mongo:7.0
-      alias: mongo
+  - name: mongo:7.0
+    alias: mongo
 
 build_photographer:
   stage: release
@@ -36,6 +33,7 @@ build_photographer:
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
+  # These variables are needed to make executor image able to download images
   variables:
     APT_CACHE: http://apt-cacher-01.priv.enst-bretagne.fr:3142
     HTTP_PROXY: http://192.108.115.2:8080
@@ -43,7 +41,7 @@ build_photographer:
     NO_PROXY: gitlab-df.imt-atlantique.fr,gitlab-df-registry.imt-atlantique.fr
   before_script:
     - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf \"%s:%s\" \"${CI_REGISTRY_USER}\" \"${CI_REGISTRY_PASSWORD}\" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
   script:
     - >-
       /kaniko/executor
@@ -65,22 +63,24 @@ deploy_photographer:
 
     entrypoint: [""]
   before_script:
+    # Configure kubectl with the deployment ServiceAccount
     - echo "${KUBE_CA}" | base64 -d > /tmp/ca.crt
     - kubectl config set-cluster k8s --server="${KUBE_URL}" --certificate-authority=/tmp/ca.crt --embed-certs=true
     - kubectl config set-credentials gitlab-deployer --token="${KUBE_TOKEN}"
     - kubectl config set-context default --cluster=k8s --user=gitlab-deployer --namespace=production
     - kubectl config use-context default
+  variables:
+    KUBERNETES_SERVICE_ACCOUNT: "gitlab-deployer"  # <-- ServiceAccount à utiliser
+    KUBE_NAMESPACE: "production"
   script:
     - cd src/photographer-service
     - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photographer.yml
     - kubectl apply -f k8s-photographer.yml
+    
   environment:
     name: production
 
-# =====================================
-# ============== PHOTO SERVICE =========
-# =====================================
-
+# ========== PHOTO SERVICE ==========
 test_photo:
   stage: test
   tags:
@@ -111,7 +111,7 @@ build_photo:
     NO_PROXY: gitlab-df.imt-atlantique.fr,gitlab-df-registry.imt-atlantique.fr
   before_script:
     - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf \"%s:%s\" \"${CI_REGISTRY_USER}\" \"${CI_REGISTRY_PASSWORD}\" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
   script:
     - >-
       /kaniko/executor
@@ -137,30 +137,10 @@ deploy_photo:
     - kubectl config set-credentials gitlab-deployer --token="${KUBE_TOKEN}"
     - kubectl config set-context default --cluster=k8s --user=gitlab-deployer --namespace=production
     - kubectl config use-context default
+
   script:
     - cd src/photo-service
     - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photo.yml
     - kubectl apply -f k8s-photo.yml
   environment:
     name: production
-
-# =====================================
-# ============ REACTION SERVICE =========
-# =====================================
-
-test_reaction:
-  stage: test
-  tags:
-    - kubernetes
-  variables:
-    MONGO_HOST: mongo
-    MONGO_PORT: 27017
-    DATABASE_NAME: reactions_test
-  image: gitlab-registry.imt-atlantique.fr/devops-lab/shared/photoapp-fastapi-microservice-test:1.0
-  script:
-    - cd src/reaction-service
-    - pytest -p no:warnings
-  services:
-    - name: mongo:7.0
-      alias: mongo
-

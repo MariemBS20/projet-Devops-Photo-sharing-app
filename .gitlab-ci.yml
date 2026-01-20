@@ -50,7 +50,7 @@ build_photographer:
       --context "${CI_PROJECT_DIR}/src/photographer-service"
       --dockerfile "${CI_PROJECT_DIR}/src/photographer-service/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}/photographer:${CI_COMMIT_SHORT_SHA}"
-      --destination "${CI_REGISTRY_IMAGE}/photographer:latest"
+      # --destination "${CI_REGISTRY_IMAGE}/photographer:latest"
       --target production
       --build-arg HTTP_PROXY=${HTTP_PROXY}
       --build-arg HTTPS_PROXY=${HTTPS_PROXY}
@@ -61,7 +61,8 @@ deploy_photographer:
   tags:
     - kubernetes
   image:
-    name: bitnami/kubectl
+    name: gitlab-registry.imt-atlantique.fr/devops-lab/shared/bitnami/kubectl:latest
+
     entrypoint: [""]
   before_script:
     - echo "${KUBE_CA}" | base64 -d > /tmp/ca.crt
@@ -117,7 +118,7 @@ build_photo:
       --context "${CI_PROJECT_DIR}/src/photo-service"
       --dockerfile "${CI_PROJECT_DIR}/src/photo-service/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}/photo:${CI_COMMIT_SHORT_SHA}"
-      --destination "${CI_REGISTRY_IMAGE}/photo:latest"
+      # --destination "${CI_REGISTRY_IMAGE}/photo:latest"
       --target production
       --build-arg HTTP_PROXY=${HTTP_PROXY}
       --build-arg HTTPS_PROXY=${HTTPS_PROXY}

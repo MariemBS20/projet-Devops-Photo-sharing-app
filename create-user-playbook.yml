@@ -1,0 +1,12 @@
+---
+- hosts: all
+
+  tasks:
+    - name: Add bob user
+      user:
+        name: bob
+        group: admin
+        state: present
+      become: true
+      become_user: root
+

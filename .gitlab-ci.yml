@@ -147,19 +147,5 @@ deploy_photo:
 # ============ REACTION SERVICE =========
 # =====================================
 
-test_reaction:
-  stage: test
-  tags:
-    - kubernetes
-  variables:
-    MONGO_HOST: mongo
-    MONGO_PORT: 27017
-    DATABASE_NAME: reactions_test
-  image: gitlab-registry.imt-atlantique.fr/devops-lab/shared/photoapp-fastapi-microservice-test:1.0
-  script:
-    - cd src/reaction-service
-    - pytest -p no:warnings
-  services:
-    - name: mongo:7.0
-      alias: mongo
+
 

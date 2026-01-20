@@ -89,7 +89,7 @@ CMD ["bash"]
 FROM base AS production
 
 # Copy application code
-COPY main.py config.py database.py models.py exceptions.py clients.py tags_pb2.py tags_pb2_grpc.py ./
+COPY main.py config.py database.py models.py exceptions.py clients.py tags_pb2.py tags_pb2_grpc.py  photo_of_day_pb2.py photo_of_day_pb2_grpc.py /
 COPY routers/ ./routers/
 
 # Copy proto directory

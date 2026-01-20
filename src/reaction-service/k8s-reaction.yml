@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: reaction-service
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+  selector:
+    app: reaction-service
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reaction-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reaction-service
+  template:
+    metadata:
+      labels:
+        app: reaction-service
+    spec:
+      containers:
+        - name: reaction-service
+          image: gitlab-df-registry.imt-atlantique.fr/devops/devops-s26-07/reaction:latest
+          imagePullPolicy: Always
+          env:
+            - name: LOG_LEVEL
+              value: DEBUG
+            - name: MONGO_HOST
+              value: mongodb
+            # si ton reaction-service communique avec d'autres services,
+            # ajoute-les ici (exemple)
+            # - name: PHOTO_HOST
+            #   value: photo-service
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "1"
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: regcred

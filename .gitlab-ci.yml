@@ -94,7 +94,7 @@ test_photo:
     - cd src/photo-service
     - pytest -p no:warnings
   services:
-    - name: mongo:7.0
+    - name: gitlab-registry.imt-atlantique.fr/devops-lab/shared/mongo:7.0
       alias: mongo
 
 build_photo:
@@ -143,4 +143,4 @@ deploy_photo:
     - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photo.yml
     - kubectl apply -f k8s-photo.yml
   environment:
-    name: production
+    name: production 

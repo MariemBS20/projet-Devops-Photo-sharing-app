@@ -10,7 +10,7 @@
 
 
 
-FROM python:3.12.8-slim AS base
+FROM gitlab-registry.imt-atlantique.fr/devops-lab/shared/python:3.12.8-slim AS base
 
 WORKDIR /app
 

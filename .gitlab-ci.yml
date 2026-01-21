@@ -60,7 +60,6 @@ deploy_photographer:
     - kubernetes
   image:
     name: gitlab-registry.imt-atlantique.fr/devops-lab/shared/bitnami/kubectl:latest
-
     entrypoint: [""]
   before_script:
     # Configure kubectl with the deployment ServiceAccount
@@ -143,8 +142,9 @@ deploy_photo:
     - sed -i "s/:latest/:${CI_COMMIT_SHORT_SHA}/g" k8s-photo.yml
     - kubectl apply -f k8s-photo.yml
   environment:
-    name: production 
+    name: production
 
+# ========== REACTION SERVICE ==========
 test_reaction:
   stage: test
   tags:
@@ -175,7 +175,7 @@ build_reaction:
     NO_PROXY: gitlab-df.imt-atlantique.fr,gitlab-df-registry.imt-atlantique.fr
   before_script:
     - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf \"%s:%s\" \"${CI_REGISTRY_USER}\" \"${CI_REGISTRY_PASSWORD}\" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "gitlab-ci-token" "${CI_JOB_TOKEN}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
   script:
     - >-
       /kaniko/executor

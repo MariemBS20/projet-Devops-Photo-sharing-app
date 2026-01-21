@@ -48,7 +48,7 @@ spec:
               cpu: "1"
 
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 
       imagePullSecrets:
         - name: regcred

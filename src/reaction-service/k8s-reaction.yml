@@ -5,8 +5,9 @@ metadata:
 spec:
   ports:
     - port: 80
-    - targetPort: 8080
-    - protocol: TCP
+      targetPort: 8080
+      protocol: TCP
+
   selector:
     app: reaction-service
 

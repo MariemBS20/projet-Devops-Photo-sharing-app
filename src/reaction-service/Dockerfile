@@ -67,7 +67,7 @@ CMD ["bash"]
 FROM base AS production
 
 # Copy application code
-COPY main.py config.py database.py models.py exceptions.py clients.py ./
+COPY main.py config.py database.py models.py exceptions.py clients.py photo_of_day_pb2_grpc.py photo_of_day_pb2.py /app/
 COPY routers/ ./routers/
 
 # Create non-root user

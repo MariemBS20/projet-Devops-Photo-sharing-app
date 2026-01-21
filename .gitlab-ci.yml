@@ -179,7 +179,6 @@ build_reaction:
   script:
     - >-
       /kaniko/executor
-      --registry-mirror "container-registry-cache.imt-atlantique.fr:5000"
       --context "${CI_PROJECT_DIR}/src/reaction-service"
       --dockerfile "${CI_PROJECT_DIR}/src/reaction-service/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}/reaction:${CI_COMMIT_SHORT_SHA}"

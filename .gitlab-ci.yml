@@ -210,17 +210,6 @@ deploy_reaction:
     name: production
     
 # ========== PHOTO OF DAY SERVICE (gRPC) ==========
-test_photo_of_day:
-  stage: test
-  tags:
-    - kubernetes
-  variables:
-    GRPC_PORT: 50052
-  image: gitlab-registry.imt-atlantique.fr/devops-lab/shared/photoapp-fastapi-microservice-test:1.0
-  script:
-    - cd src/photo-of-day-service
-    - pytest -p no:warnings
-  # Pas besoin de MongoDB pour ce service gRPC
 
 build_photo_of_day:
   stage: release

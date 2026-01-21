@@ -8,6 +8,13 @@ FROM gitlab-registry.imt-atlantique.fr/devops-lab/shared/python:3.12.8-slim AS b
 
 WORKDIR /app
 
+ARG APT_CACHE
+
+# Configure APT proxy if APT_CACHE is set
+RUN if [ -n "$APT_CACHE" ]; then \
+      echo "Acquire::http::Proxy \"$APT_CACHE\";" > /etc/apt/apt.conf.d/01proxy; \
+      echo "Acquire::http::Proxy \"$APT_CACHE\";" > /etc/apt/apt.conf; \
+    fi
 # Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -55,7 +62,7 @@ RUN pip install --no-cache-dir \
     ipython==8.31.0
 
 # Copy application code (SANS database.py et models.py)
-COPY grpc_server.py config.py clients.py ./
+COPY grpc_server.py config.py clients.py photo_of_day_pb2.py photo_of_day_pb2_grpc.py  ./
 
 # Copy startup script
 COPY start-grpc.sh /app/

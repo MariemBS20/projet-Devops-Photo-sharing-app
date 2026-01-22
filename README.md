@@ -1,1 +1,1 @@
-# projet-Devops-Photo-sharing-app
+# ProjetDevops:Photo-sharing-app
